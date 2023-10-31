@@ -25,6 +25,7 @@ import org.apache.maven.plugin.MojoFailureException;
 import org.apache.maven.plugins.annotations.Mojo;
 import org.apache.maven.plugins.annotations.Parameter;
 import org.codehaus.plexus.util.StringUtils;
+import org.codehaus.plexus.util.cli.CommandLineException;
 
 /**
  * The git flow release finish mojo.
@@ -221,6 +222,10 @@ public class GitFlowReleaseFinishMojo extends AbstractGitFlowMojo {
                 throw new MojoFailureException("More than one release branch exists. Cannot finish release.");
             }
 
+            if (settings.isInteractiveMode()) {
+                commitMessages.setTagReleaseMessage(promptTagReleaseFinishMessage());
+            }
+
             // check snapshots dependencies
             if (!allowSnapshots) {
                 gitCheckout(releaseBranch);
@@ -380,5 +385,13 @@ public class GitFlowReleaseFinishMojo extends AbstractGitFlowMojo {
         } catch (Exception e) {
             throw new MojoFailureException("release-finish", e);
         }
+    }
+
+    private String promptTagReleaseFinishMessage() throws MojoFailureException, CommandLineException {
+        String tagReleaseMessage = prompter.prompt("Please input release tag message? [" + commitMessages.getTagReleaseMessage() + "]", res->true);
+        if (StringUtils.isBlank(tagReleaseMessage)){
+            tagReleaseMessage= commitMessages.getTagHotfixMessage();
+        }
+        return tagReleaseMessage;
     }
 }

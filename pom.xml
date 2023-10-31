@@ -51,14 +51,16 @@
 
     <distributionManagement>
         <repository>
-            <id>sonatype-nexus-staging</id>
-            <name>Nexus Release Repository</name>
-            <url>https://oss.sonatype.org/service/local/staging/deploy/maven2/</url>
+            <!--id的名字可以任意取，但是在setting文件中的属性<server>的ID与这里一致-->
+            <id>releases</id>
+            <name>release</name>
+            <!--指向仓库类型为host(宿主仓库）的储存类型为Release的仓库-->
+            <url>http://nexus.dotwith.com:9091/repository/maven-releases/</url>
         </repository>
         <snapshotRepository>
-            <id>sonatype-nexus-snapshots</id>
-            <name>Sonatype Nexus Snapshots</name>
-            <url>https://oss.sonatype.org/content/repositories/snapshots/</url>
+            <id>snapshots</id>
+            <name>snapshot</name>
+            <url>http://nexus.dotwith.com:9091/repository/maven-snapshots/</url>
         </snapshotRepository>
     </distributionManagement>
 

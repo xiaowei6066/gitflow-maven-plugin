@@ -18,6 +18,7 @@ package com.amashchenko.maven.plugin.gitflow;
 import java.util.HashMap;
 import java.util.Map;
 
+import com.google.common.base.Strings;
 import org.apache.maven.artifact.Artifact;
 import org.apache.maven.artifact.ArtifactUtils;
 import org.apache.maven.plugin.MojoExecutionException;
@@ -149,6 +150,7 @@ public class GitFlowHotfixFinishMojo extends AbstractGitFlowMojo {
             String hotfixBranchName = null;
             if (settings.isInteractiveMode()) {
                 hotfixBranchName = promptBranchName();
+                commitMessages.setTagHotfixMessage(promptTagHotfixMessage());
             } else if (StringUtils.isNotBlank(hotfixBranch)) {
                 if (!hotfixBranch.startsWith(gitFlowConfig.getHotfixBranchPrefix())) {
                     throw new MojoFailureException("The hotfixBranch parameter doesn't start with hotfix branch prefix.");
@@ -403,5 +405,14 @@ public class GitFlowHotfixFinishMojo extends AbstractGitFlowMojo {
         String[] branches = hotfixBranches.split("\\r?\\n");
 
         return prompter.prompt(branches, null, "Hotfix branches:", "Choose hotfix branch to finish");
+    }
+
+
+    private String promptTagHotfixMessage() throws MojoFailureException, CommandLineException {
+        String tagHotfixMessage = prompter.prompt("Please input hotfix tag message? [" + commitMessages.getTagHotfixMessage() + "]", res->true);
+        if (StringUtils.isBlank(tagHotfixMessage)){
+            tagHotfixMessage= commitMessages.getTagReleaseMessage();
+        }
+        return tagHotfixMessage;
     }
 }
